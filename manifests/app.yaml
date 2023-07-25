@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openai-deployment
+  namespace: default
+  labels:
+    app: openai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openai
+  template:
+    metadata:
+      labels:
+        app: openai
+    spec:
+      containers:
+        - name: openai
+          image: ghcr.io/notbjoggisatall/openai:1.0-SNAPSHOT
+          imagePullPolicy: Always
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: SPRING_CLOUD_CONFIG_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: config-server-credentials
+                  key: username
+            - name: SPRING_CLOUD_CONFIG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-server-credentials
+                  key: password
+          ports:
+            - containerPort: 10001
+      imagePullSecrets:
+        - name: credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openai-service
+spec:
+  selector:
+    app: openai
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 10001
