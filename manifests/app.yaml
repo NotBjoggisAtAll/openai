@@ -19,6 +19,13 @@ spec:
         - name: openai
           image: ghcr.io/notbjoggisatall/openai:1.0-SNAPSHOT
           imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 10001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 5
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
