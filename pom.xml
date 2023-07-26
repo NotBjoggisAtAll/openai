@@ -96,7 +96,7 @@
         </executions>
         <configuration>
           <image>
-            <name>ghcr.io/notbjoggisatall/${project.artifactId}:${project.version}</name>
+            <name>ghcr.io/notbjoggisatall/${project.artifactId}:latest</name>
             <publish>true</publish>
           </image>
           <docker>
