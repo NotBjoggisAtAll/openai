@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: openai
-          image: ghcr.io/notbjoggisatall/openai:1.0-SNAPSHOT
+          image: ghcr.io/notbjoggisatall/openai:latest
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
