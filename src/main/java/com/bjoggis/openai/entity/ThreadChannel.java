@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -24,6 +25,10 @@ public class ThreadChannel {
 
   @OneToMany(mappedBy = "threadChannel")
   private List<Message> messages;
+
+  @ManyToOne
+  private Account user;
+
 
   public String getOriginalMessageId() {
     return originalMessageId;
@@ -55,5 +60,13 @@ public class ThreadChannel {
 
   public void setMessages(List<Message> messages) {
     this.messages = messages;
+  }
+
+  public Account getUser() {
+    return user;
+  }
+
+  public void setUser(Account user) {
+    this.user = user;
   }
 }
