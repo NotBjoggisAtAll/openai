@@ -12,6 +12,10 @@ public interface ThreadChannelRepository extends JpaRepository<ThreadChannel, Lo
   @Query("select t from ThreadChannel t where t.threadId = ?1")
   ThreadChannel findByThreadId(String threadId);
 
+  @Query("select t from ThreadChannel t where t.threadId = ?1")
+  Optional<ThreadChannel> findByThreadIdOpt(String threadId);
+
+
   @Query("select t from ThreadChannel t where t.threadId = ?1 and t.user = ?2 order by t.id asc")
   Optional<ThreadChannel> findByThreadIdAndUserOrderById(String threadId, Account account);
 

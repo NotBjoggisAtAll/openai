@@ -3,6 +3,7 @@ package com.bjoggis.openai.controller;
 import com.bjoggis.openai.entity.Account;
 import com.bjoggis.openai.entity.Message;
 import com.bjoggis.openai.entity.ThreadChannel;
+import com.bjoggis.openai.function.DeleteThreadFunction;
 import com.bjoggis.openai.repository.AccountRepository;
 import com.bjoggis.openai.repository.ThreadChannelRepository;
 import com.bjoggis.openai.resource.MessageResource;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,11 +26,13 @@ public class ThreadController {
 
   private final ThreadChannelRepository threadChannelRepository;
   private final AccountRepository accountRepository;
+  private final DeleteThreadFunction deleteThreadFunction;
 
   public ThreadController(ThreadChannelRepository threadChannelRepository,
-      AccountRepository accountRepository) {
+      AccountRepository accountRepository, DeleteThreadFunction deleteThreadFunction) {
     this.threadChannelRepository = threadChannelRepository;
     this.accountRepository = accountRepository;
+    this.deleteThreadFunction = deleteThreadFunction;
   }
 
   @PostMapping
@@ -81,4 +85,20 @@ public class ThreadController {
         .toList();
   }
 
+  @DeleteMapping("/{threadId}")
+  @Transactional
+  public void deleteThread(Principal principal, @PathVariable String threadId) {
+    Account account = accountRepository.findByUsername(principal.getName());
+
+    Optional<ThreadChannel> channel = threadChannelRepository.findByThreadIdAndUserOrderById(
+        threadId,
+        account);
+
+    if (channel.isEmpty()) {
+      return;
+    }
+
+    deleteThreadFunction.accept(new DeleteThreadFunction.DeleteThreadOptions(threadId));
+
+  }
 }
